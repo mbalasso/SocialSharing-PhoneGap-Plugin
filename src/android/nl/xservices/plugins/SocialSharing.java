@@ -295,6 +295,11 @@ public class SocialSharing extends CordovaPlugin {
           if (matcher.find()) {
             filename = matcher.group(1).replaceAll("[^a-zA-Z0-9._-]", "");
             localImage = "file://" + dir + "/" + filename;
+            /* change sendIntent type based on Content-Type  
+            String contenttype = connection.getHeaderField("Content-Type");
+            if (contenttype != null){
+                sendIntent.setType(contenttype);
+            }*/
           }
         }
         saveFile(getBytes(connection.getInputStream()), dir, filename);
@@ -326,6 +331,11 @@ public class SocialSharing extends CordovaPlugin {
     } else if (!image.startsWith("file://")) {
       throw new IllegalArgumentException("URL_NOT_SUPPORTED");
     }
+    // set proper content type from filename
+    String contenttype = URLConnection.getFileNameMap().getContentTypeFor(localImage);
+    if (contenttype != null){
+        sendIntent.setType(contenttype);
+    }    
     return Uri.parse(localImage);
   }
 
